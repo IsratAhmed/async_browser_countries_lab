@@ -1,40 +1,18 @@
-window.addEventListener("DOMContentLoaded", () => {
-    //const section = document.getElementById("country");
-    const button = document.querySelector("#country-button");
+const countries = document.querySelector("#countries");
 
-    const fetchCountry = async () => {
+const fetchAllCountries = async () => {
 
-        const countryUrls = [];
+    const response = await fetch("https://restcountries.com/v3.1/all");
+    const jsonData = await response.json();
+    const countriesData = jsonData.data;
 
-        for(let name = 0; name < countryUrls.length() ; name++){
-            countryUrls.push(`https://restcountries.com/v3.1/name/${name}`)
-        }
-        
+    const countryNames = jsonData.map((country) => country.name.common);
+    countryNames.forEach((countryNames) => {
+        const nameLi = document.createElement("li");
+        nameLi.textContent = countryNames;
+        countries.appendChild(nameLi);
+    })
 
-        const namePromises = countryUrls.map( async (url) => {
-            const response = await fetch(url);
-            return response.json();
-        })
+}
 
-        Promise.all( namePromises )
-        .then((allResults) => {
-
-            const countriesData = allResults.map( (result) => result.data ).flat();
-            
-            const countryNames = countriesData.map((name) => name.name);
-
-            const countryUl = document.querySelector("ul");   
-    
-            countryNames.forEach((countryName) => {
-                const nameLi = document.createElement("li");
-                nameLi.textContent = countryName;
-                countryUl.appendChild(nameLi);
-            })
-
-        })
-
-
-    }
-    button.addEventListener("click",fetchCountry);
-
-})
+fetchAllCountries()
